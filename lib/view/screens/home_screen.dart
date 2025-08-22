@@ -1,11 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:trendify/constants/app_constants.dart';
-import 'package:trendify/data/model/product_item_model.dart';
-import 'package:trendify/view/widgets/product_item.dart';
+import 'package:trendify/constants/app_colors.dart';
+import 'package:trendify/view/widgets/home_tab_view.dart';
+import 'package:trendify/view/widgets/category_tab_view.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
 
   Widget tobBarHome(BuildContext context) {
     return Row(
@@ -48,51 +57,46 @@ class HomeScreen extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _tabController=TabController(length: 2, vsync: this);
+  }
+
+
+  @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                tobBarHome(context),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "New Arrivals🔥",
-                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+          child: Column(
+            children: [
+              tobBarHome(context),
+              const SizedBox(height: 20),
+              TabBar(
+                  controller: _tabController,
+                  dividerHeight: 0.0,
+                  unselectedLabelColor:AppColors.grey,
+                  tabs: [
+                    Tab(
+                      text: "Home",
                     ),
-                    Text(
-                      "See All",
-                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Tab(
+                      text: "Categories",
                     ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 20,
-                   // mainAxisSpacing: 40,
-                    childAspectRatio: .80
-                  ),
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount:dummyProducts.length,
-                  itemBuilder: (context, index) {
-                 return ProductItem(productItemModel: dummyProducts[index]);
-                  },
-                ),
-              ],
-            ),
+                  ]),
+              const SizedBox(height: 20),
+               Expanded(
+                 child: TabBarView(
+                     controller: _tabController,
+                     children: [
+                   HomeTabView(),
+                   CategoryTabView(),
+                 ]),
+               )
+
+            ],
           ),
         ),
       ),
