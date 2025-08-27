@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trendify/constants/app_routers.dart';
 import 'package:trendify/view/screens/custom_bottom_nav_bar.dart';
 
 void main() {
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: CustomBottomNavBar(),
+      onGenerateRoute: AppRouters.onGenerateRoute,
 
     );
   }

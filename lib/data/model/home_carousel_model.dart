@@ -9,12 +9,12 @@ List<HomeCarouselModel> dummyHomeCarouselItems = [
   HomeCarouselModel(
     id: '1',
     imgUrl:
-    'https://marketplace.canva.com/EAFMdLQAxDU/1/0/1600w/canva-white-and-gray-modern-real-estate-modern-home-banner-NpQukS8X1oo.jpg',
+    'https://edit.org/photos/img/blog/mbp-template-banner-online-store-free.jpg-840.jpg',
   ),
   HomeCarouselModel(
     id: '2',
     imgUrl:
-    'https://edit.org/photos/img/blog/mbp-template-banner-online-store-free.jpg-840.jpg',
+    'https://marketplace.canva.com/EAFMdLQAxDU/1/0/1600w/canva-white-and-gray-modern-real-estate-modern-home-banner-NpQukS8X1oo.jpg',
   ),
   HomeCarouselModel(
     id: '3',

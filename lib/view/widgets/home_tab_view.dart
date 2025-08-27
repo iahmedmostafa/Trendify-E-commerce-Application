@@ -1,32 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:trendify/data/model/product_item_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trendify/business_logic/home/home_cubit.dart';
+import 'package:trendify/constants/app_routes.dart';
 import 'package:trendify/view/widgets/custom_carousel_slider.dart';
 import 'package:trendify/view/widgets/product_item.dart';
 
 class HomeTabView extends StatelessWidget {
   const HomeTabView({super.key});
 
-  Widget buildGridViewItems(){
-    
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 20,
-          childAspectRatio: .80
-      ),
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount:dummyProducts.length,
-      itemBuilder: (context, index) {
-        return ProductItem(productItemModel: dummyProducts[index]);
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
+    return BlocBuilder<HomeCubit, HomeState>(
+      bloc: BlocProvider.of<HomeCubit>(context),
+  builder: (context, state) {
+    if (state is HomeLoading) {
+      return Center(child: CircularProgressIndicator.adaptive());
+    }
+    else if (state is HomeLoaded) {
+      return Column(
         children: [
           CustomCarouselSlider(),
           const SizedBox(height: 10),
@@ -36,8 +27,8 @@ class HomeTabView extends StatelessWidget {
               Text(
                 "New Arrivals🔥",
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 18
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18
                 ),
               ),
               Text(
@@ -50,9 +41,37 @@ class HomeTabView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          buildGridViewItems(),
-        ],
+      Expanded(
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 20,
+              childAspectRatio: .80
+          ),
+          itemCount:state.products.length,
+          itemBuilder: (context, index) {
+            return InkWell(
+            onTap: (){
+              Navigator.of(context,rootNavigator: true).pushNamed(AppRoutes.productDetailsScreen,arguments: state.products[index].id);
+            }
+            ,child: ProductItem(productItemModel: state.products[index]));
+          },
+        ),
       ),
-    );
+        ],
+      );
+    }
+    else if(state is HomeError){
+      return Center(
+        child: Text(state.errorMsg),
+      );
+    }
+    else {
+      return Container(
+        color: Colors.red,
+      );
+    }
+  },
+);
   }
 }
