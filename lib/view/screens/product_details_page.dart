@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trendify/business_logic/product_details_logic/product_details_cubit.dart';
 import 'package:trendify/constants/app_colors.dart';
+import 'package:trendify/data/model/product_item_model.dart';
 import 'package:trendify/view/widgets/counter_widget.dart';
 
 class ProductDetailsPage extends StatelessWidget {
@@ -29,7 +30,8 @@ class ProductDetailsPage extends StatelessWidget {
       body: SafeArea(
         child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
           bloc: BlocProvider.of<ProductDetailsCubit>(context),
-          buildWhen: (previous,current)=>current is! ProductQuantityLoaded,
+          buildWhen: (previous, current) =>
+          current is! ProductQuantityLoaded && current is! SizeSelected,
           builder: (context, state) {
             if (state is ProductLoading) {
               return Center(
@@ -72,6 +74,7 @@ class ProductDetailsPage extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -81,9 +84,10 @@ class ProductDetailsPage extends StatelessWidget {
                                   children: [
                                     Text(
                                       state.productItemModel.name,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleMedium,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge!
+                                          .copyWith(fontSize: 20),
                                     ),
                                     Row(
                                       children: [
@@ -95,28 +99,172 @@ class ProductDetailsPage extends StatelessWidget {
                                         ),
                                         Icon(
                                           Icons.star,
-                                          color: AppColors.yellow,
-                                          size: 25,
+                                          color: AppColors.orange,
+                                          size: 26,
                                         ),
                                       ],
                                     ),
                                   ],
                                 ),
-                                BlocBuilder<ProductDetailsCubit,ProductDetailsState >(
-                                  bloc: BlocProvider.of<ProductDetailsCubit>(context),
-                                  buildWhen: (previous,current)=>current is ProductQuantityLoaded || current is ProductSuccess ,
+                                BlocBuilder<
+                                    ProductDetailsCubit,
+                                    ProductDetailsState
+                                >(
+                                  bloc: BlocProvider.of<ProductDetailsCubit>(
+                                    context,
+                                  ),
+                                  buildWhen: (previous, current) =>
+                                  current is ProductQuantityLoaded ||
+                                      current is ProductSuccess,
                                   builder: (context, state) {
-                                     if(state is ProductQuantityLoaded){
-                                    return CounterWidget(value:state.counterValue,cubit: BlocProvider.of<ProductDetailsCubit>(context),productId: productId,);
-                                    }
-                                    else if(state is ProductSuccess){
-                                      return CounterWidget(value:state.productItemModel.quantity , cubit: BlocProvider.of<ProductDetailsCubit>(context),productId: productId);
-                                    }
-                                    else{
+                                    if (state is ProductQuantityLoaded) {
+                                      return CounterWidget(
+                                        value: state.counterValue,
+                                        cubit:
+                                        BlocProvider.of<
+                                            ProductDetailsCubit
+                                        >(context),
+                                        productId: productId,
+                                      );
+                                    } else if (state is ProductSuccess) {
+                                      return CounterWidget(
+                                        value: state.productItemModel.quantity,
+                                        cubit:
+                                        BlocProvider.of<
+                                            ProductDetailsCubit
+                                        >(context),
+                                        productId: productId,
+                                      );
+                                    } else {
                                       return SizedBox.shrink();
                                     }
-
                                   },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "Size",
+                              style: Theme.of(
+                                context,
+                              ).textTheme.labelLarge!.copyWith(fontSize: 20),
+                            ),
+                            BlocBuilder<
+                                ProductDetailsCubit,
+                                ProductDetailsState
+                            >(
+                              bloc: BlocProvider.of<ProductDetailsCubit>(
+                                context,
+                              ),
+                              buildWhen: (previous, current) =>
+                              current is SizeSelected ||
+                                  current is ProductSuccess,
+                              builder: (context, state) {
+                                return Row(
+                                  children: ProductSize.values
+                                      .map(
+                                        (size) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                      child: InkWell(
+                                        onTap: () {
+                                          BlocProvider.of<
+                                              ProductDetailsCubit
+                                          >(context)
+                                              .selectSize(size);
+                                        },
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color:
+                                            state is SizeSelected &&
+                                                state.productSize== size
+                                                ? Theme.of(
+                                              context,
+                                            ).primaryColor
+                                                : AppColors.grey2,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(
+                                              8.0,
+                                            ),
+                                            child: Text(size.name,style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                              color: state is SizeSelected &&
+                                                  state.productSize== size
+                                                  ? AppColors.white
+                                                  : AppColors.black,
+                                              fontWeight: FontWeight.normal
+                                            ),),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                      .toList(),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "Description",
+                              style: Theme.of(
+                                context,
+                              ).textTheme.labelLarge!.copyWith(fontSize: 20),
+                            ),
+                            Text(
+                              state.productItemModel.desc,
+                              style: TextStyle(color: AppColors.grey),
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text.rich(
+                                  TextSpan(
+                                    text: r"$ ",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: "${state.productItemModel.price}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                ElevatedButton.icon(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Theme.of(
+                                      context,
+                                    ).primaryColor,
+                                  ),
+                                  label: Text(
+                                    "Add To Cart",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                      color: AppColors.white,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                  icon: Icon(
+                                    CupertinoIcons.cart_badge_plus,
+                                    color: AppColors.white,
+                                    size: 25,
+                                  ),
                                 ),
                               ],
                             ),

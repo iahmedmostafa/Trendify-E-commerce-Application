@@ -13,20 +13,26 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     });
   }
 
-  incrementCounter(int productId){
+ void incrementCounter(int productId){
      final selectedIndex=dummyProducts.indexWhere((item)=>item.id==productId);
      dummyProducts[selectedIndex]=dummyProducts[selectedIndex].copyWith(
        quantity: dummyProducts[selectedIndex].quantity+1,
      );
      emit(ProductQuantityLoaded(counterValue:  dummyProducts[selectedIndex].quantity));
   }
-  decrementCounter(int productId){
+ void  decrementCounter(int productId){
     final selectedIndex=dummyProducts.indexWhere((item)=>item.id==productId);
     dummyProducts[selectedIndex]=dummyProducts[selectedIndex].copyWith(
       quantity:dummyProducts[selectedIndex].quantity==1?dummyProducts[selectedIndex].quantity: dummyProducts[selectedIndex].quantity-1,
     );
     emit(ProductQuantityLoaded(counterValue:  dummyProducts[selectedIndex].quantity));
   }
+
+  void selectSize(ProductSize size){
+     emit(SizeSelected(productSize: size));
+  }
+
+
 
 
 

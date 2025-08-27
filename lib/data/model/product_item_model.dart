@@ -1,3 +1,11 @@
+enum ProductSize{
+  S,
+  M,
+  L,
+  XL,
+
+}
+
 class ProductItemModel {
   final int id;
   final String name;
@@ -8,6 +16,7 @@ class ProductItemModel {
   final bool isFavourite;
   final String review;
   final int quantity;
+  final ProductSize? size;
 
   ProductItemModel({
     required this.id,
@@ -19,6 +28,7 @@ class ProductItemModel {
     this.isFavourite = false,
     this.review = "4.5",
     this.quantity = 1,
+    this.size,
   });
 
   ProductItemModel copyWith({
@@ -31,6 +41,7 @@ class ProductItemModel {
     bool? isFavourite,
     String? review,
     int? quantity,
+    ProductSize ? size,
   }) {
     return ProductItemModel(
       id: id ?? this.id,
@@ -42,6 +53,7 @@ class ProductItemModel {
       isFavourite: isFavourite ?? this.isFavourite,
       review: review ?? this.review,
       quantity: quantity ?? this.quantity,
+      size: size??this.size
     );
   }
 }
