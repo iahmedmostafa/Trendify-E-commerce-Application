@@ -2,8 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trendify/business_logic/product_details/product_cubit.dart';
+import 'package:trendify/business_logic/product_details_logic/product_details_cubit.dart';
 import 'package:trendify/constants/app_colors.dart';
+import 'package:trendify/view/widgets/counter_widget.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final int productId;
@@ -26,8 +27,9 @@ class ProductDetailsPage extends StatelessWidget {
       ),
 
       body: SafeArea(
-        child: BlocBuilder<ProductCubit, ProductState>(
-          bloc: BlocProvider.of<ProductCubit>(context),
+        child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
+          bloc: BlocProvider.of<ProductDetailsCubit>(context),
+          buildWhen: (previous,current)=>current is! ProductQuantityLoaded,
           builder: (context, state) {
             if (state is ProductLoading) {
               return Center(
@@ -56,13 +58,16 @@ class ProductDetailsPage extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    top: size.height*.37,
+                    top: size.height * .37,
                     child: Container(
                       width: size.width,
                       height: size.height * .6,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30)),
-                        color: AppColors.white
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                        color: AppColors.white,
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -71,27 +76,55 @@ class ProductDetailsPage extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(state.productItemModel.name,style: Theme.of(context).textTheme.titleMedium,),
-                                Row(
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(state.productItemModel.review,style: Theme.of(context).textTheme.titleSmall,),
-                                    Icon(Icons.star,color: AppColors.yellow,size: 25,)
+                                    Text(
+                                      state.productItemModel.name,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleMedium,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          state.productItemModel.review,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.titleSmall,
+                                        ),
+                                        Icon(
+                                          Icons.star,
+                                          color: AppColors.yellow,
+                                          size: 25,
+                                        ),
+                                      ],
+                                    ),
                                   ],
-                                )
+                                ),
+                                BlocBuilder<ProductDetailsCubit,ProductDetailsState >(
+                                  bloc: BlocProvider.of<ProductDetailsCubit>(context),
+                                  buildWhen: (previous,current)=>current is ProductQuantityLoaded || current is ProductSuccess ,
+                                  builder: (context, state) {
+                                     if(state is ProductQuantityLoaded){
+                                    return CounterWidget(value:state.counterValue,cubit: BlocProvider.of<ProductDetailsCubit>(context),productId: productId,);
+                                    }
+                                    else if(state is ProductSuccess){
+                                      return CounterWidget(value:state.productItemModel.quantity , cubit: BlocProvider.of<ProductDetailsCubit>(context),productId: productId);
+                                    }
+                                    else{
+                                      return SizedBox.shrink();
+                                    }
+
+                                  },
+                                ),
                               ],
                             ),
-                                Text("data"),
-                              ],
-                            )
-
                           ],
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               );
             } else if (state is ProductError) {

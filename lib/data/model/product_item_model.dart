@@ -7,6 +7,7 @@ class ProductItemModel {
   final String desc;
   final bool isFavourite;
   final String review;
+  final int quantity;
 
   ProductItemModel({
     required this.id,
@@ -16,10 +17,34 @@ class ProductItemModel {
     required this.price,
     this.desc = "Upgrade your wardrobe with this stylish and versatile piece, designed to bring together comfort, quality, and modern fashion. Crafted from premium, breathable fabric, it ensures all-day comfort whether you're at work, out with friends, or relaxing at home. The sleek design and attention to detail make it suitable for both casual outings and special occasions",
     this.isFavourite = false,
-    this.review="4.5"
+    this.review = "4.5",
+    this.quantity = 1,
   });
-}
 
+  ProductItemModel copyWith({
+    int? id,
+    String? name,
+    String? imgUrl,
+    String? category,
+    double? price,
+    String? desc,
+    bool? isFavourite,
+    String? review,
+    int? quantity,
+  }) {
+    return ProductItemModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      imgUrl: imgUrl ?? this.imgUrl,
+      category: category ?? this.category,
+      price: price ?? this.price,
+      desc: desc ?? this.desc,
+      isFavourite: isFavourite ?? this.isFavourite,
+      review: review ?? this.review,
+      quantity: quantity ?? this.quantity,
+    );
+  }
+}
 List<ProductItemModel> dummyProducts = [
   ProductItemModel(
     id: 1,

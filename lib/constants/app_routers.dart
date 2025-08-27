@@ -1,8 +1,6 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trendify/business_logic/product_details/product_cubit.dart';
+import 'package:trendify/business_logic/product_details_logic/product_details_cubit.dart';
 import 'package:trendify/constants/app_routes.dart';
 import 'package:trendify/view/screens/custom_bottom_nav_bar.dart';
 import 'package:trendify/view/screens/product_details_page.dart';
@@ -20,7 +18,7 @@ class AppRouters {
           return MaterialPageRoute(
             builder: (_) => BlocProvider(
               create: (context) {
-                final cubit=ProductCubit();
+                final cubit=ProductDetailsCubit();
                 cubit.getProductDetails(productId);
                 return cubit;
               },
