@@ -7,5 +7,6 @@ class AppColors{
   static final Color white= Colors.white;
   static final Color yellow= Colors.yellowAccent;
   static final Color orange= Colors.orangeAccent;
+  static final Color primaryColor=Colors.deepPurple;
 
 }

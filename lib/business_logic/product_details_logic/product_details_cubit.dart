@@ -1,39 +1,49 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trendify/data/model/add_to_cart_model.dart';
 import 'package:trendify/data/model/product_item_model.dart';
 part 'product_details_state.dart';
 
 class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   ProductDetailsCubit() : super(ProductInitial());
 
-   getProductDetails(int index){
+  ProductSize? size;
+  int quantity = 1;
+
+  void getProductDetails(int index) {
     emit(ProductLoading());
-    Future.delayed(Duration(seconds: 1),(){
-      final selectedProduct= dummyProducts.firstWhere((item)=>item.id==index);
+    Future.delayed(Duration(seconds: 1), () {
+      final selectedProduct = dummyProducts.firstWhere(
+        (item) => item.id == index,
+      );
       emit(ProductSuccess(productItemModel: selectedProduct));
     });
   }
 
- void incrementCounter(int productId){
-     final selectedIndex=dummyProducts.indexWhere((item)=>item.id==productId);
-     dummyProducts[selectedIndex]=dummyProducts[selectedIndex].copyWith(
-       quantity: dummyProducts[selectedIndex].quantity+1,
-     );
-     emit(ProductQuantityLoaded(counterValue:  dummyProducts[selectedIndex].quantity));
-  }
- void  decrementCounter(int productId){
-    final selectedIndex=dummyProducts.indexWhere((item)=>item.id==productId);
-    dummyProducts[selectedIndex]=dummyProducts[selectedIndex].copyWith(
-      quantity:dummyProducts[selectedIndex].quantity==1?dummyProducts[selectedIndex].quantity: dummyProducts[selectedIndex].quantity-1,
-    );
-    emit(ProductQuantityLoaded(counterValue:  dummyProducts[selectedIndex].quantity));
+   incrementCounter(int productId) {
+    quantity++;
+    emit(ProductQuantityLoaded(counterValue: quantity));
   }
 
-  void selectSize(ProductSize size){
-     emit(SizeSelected(productSize: size));
+   decrementCounter(int productId) {
+   quantity==1? quantity:quantity--;
+    emit(ProductQuantityLoaded(counterValue: quantity));
   }
 
+  void selectSize(ProductSize size) {
+    this.size = size;
+    emit(SizeSelected(productSize: size));
+  }
 
-
-
-
+  addToCart(int productId) {
+    emit(AddingToCart());
+    final cartItem = AddToCartModel(
+      productId: productId,
+      quantity: quantity,
+      productSize: size!,
+      product:dummyProducts.firstWhere((item) => item.id == productId));
+    dummyCartProducts.add(cartItem);
+    Future.delayed(Duration(seconds: 1), () {
+      emit(AddedToCart(productId: productId));
+    });
+  }
 }

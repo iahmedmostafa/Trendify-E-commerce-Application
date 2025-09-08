@@ -15,8 +15,7 @@ class ProductItemModel {
   final String desc;
   final bool isFavourite;
   final String review;
-  final int quantity;
-  final ProductSize? size;
+
 
   ProductItemModel({
     required this.id,
@@ -27,8 +26,7 @@ class ProductItemModel {
     this.desc = "Upgrade your wardrobe with this stylish and versatile piece, designed to bring together comfort, quality, and modern fashion. Crafted from premium, breathable fabric, it ensures all-day comfort whether you're at work, out with friends, or relaxing at home. The sleek design and attention to detail make it suitable for both casual outings and special occasions",
     this.isFavourite = false,
     this.review = "4.5",
-    this.quantity = 1,
-    this.size,
+
   });
 
   ProductItemModel copyWith({
@@ -40,8 +38,6 @@ class ProductItemModel {
     String? desc,
     bool? isFavourite,
     String? review,
-    int? quantity,
-    ProductSize ? size,
   }) {
     return ProductItemModel(
       id: id ?? this.id,
@@ -52,8 +48,6 @@ class ProductItemModel {
       desc: desc ?? this.desc,
       isFavourite: isFavourite ?? this.isFavourite,
       review: review ?? this.review,
-      quantity: quantity ?? this.quantity,
-      size: size??this.size
     );
   }
 }
